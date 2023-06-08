@@ -43,6 +43,7 @@ def client_thread(conn, addr):
         try:
             message = conn.recv(2048)
             if message:
+                message = str(message).strip('b\'\"\\n\"\'')
                 print(f'< {addr[0]} >: {message}')
                 message_to_be_sent = f'< {addr[0]} >: {message}'
                 broadcast(message_to_be_sent, conn)
@@ -63,12 +64,8 @@ def broadcast(msg, conn):
 
 
 def remove(conn):
-    for connection in list_of_clients:
-        if conn == connection:
-            print('< User > disconnected')
-            message_to_be_sent = '< User > disconnected'
-            broadcast(message_to_be_sent, conn)
-            list_of_clients.remove(connection)
+    if conn in list_of_clients:
+        list_of_clients.remove(conn)
 
 
 def run_server():
